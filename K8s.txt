@@ -1,0 +1,484 @@
+Docker Hub:
+hisudhardocker/sudhar@123
+
+Syllabus/Curriculum
+https://github.com/cncf/curriculum
+
+
+5% - Scheduling 
+5% - Logging/Monitoring
+8% - Application Lifecycle Management
+11% - Cluster Maintenance
+12% - Security 
+7% - Storage
+10% - Troubleshooting 
+19% - Core Concepts
+11% - Networking
+12% - Installation,  Configuration & Validation
+
+
+
+https://github.com/kubernetes-up-and-running/examples.
+
+Please find some links to Kubernetes Documentation Site below:
+
+Kubernetes Documentation Site: https://kubernetes.io/docs/
+
+Kubernetes Documentation Concepts: https://kubernetes.io/docs/concepts/
+
+Kubernetes Documentation Setup: https://kubernetes.io/docs/setup/
+
+Kubernetes Documentation - Minikube Setup: https://kubernetes.io/docs/getting-started-guides/minikube/
+
+Developer: https://www.cncf.io/certification/ckad/
+
+Candidate Handbook: https://www.cncf.io/certification/candidate-handbook
+
+Exam Tips: https://www2.thelinuxfoundation.org/ckad-tips
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+5%	 Scheduling 
+5%	 Logging/Monitoring
+7%	 Storage
+8%	 Application Lifecycle Management
+10%	 Troubleshooting 
+11%	 Cluster Maintenance
+11%	 Networking
+12%	 Security 
+12%	 Installation,  Configuration & Validation
+19%	 Core Concepts
+100%	
+
+
+Section 1: Introduction 8 / 8|15min
+Section 2: Core Concepts 12 / 25|1hr 55min
+Section 3: Configuration 0 / 28|1hr 10min
+Section 4: Multi-Container PODs 0 / 2|5min
+Section 5: Observability 0 / 7|18min
+Section 6: POD Design 0 / 9|40min
+Section 7: Services & Networking 0 / 9|50min
+Section 8: State Persistence 0 / 12|40min
+Section 9: Kubernetes Challenge Series 0 / 4|13min
+Section 10: Certification Tips 0 / 3|6min
+Section 11: Lightning Labs 0 / 5|53min
+Section 12: Mock Exams 0 / 4|2min
+
+------------------------------------------------------------------------------------------------------------
+
+kubectl commands
+
+Pods:
+kubectl run <<podname>> --image = <<image name>>
+kubectl create -f <<pod.yml>>
+
+kubectl get pods
+kubectl get pods -o wide
+
+kubectl describe pod <<pod name>>
+
+kubectl edit pod <<pod name>>
+kubectl get pod <pod-name> -o yaml > pod-definition.yml
+
+
+
+==============================================
+
+kubectl create -f <rs.yml>
+kubectl get replicaset
+kubectl delete replicaset <name>
+
+
+kubectl replace -f <RS.yml>
+kubectl scale --replicas=6 -f <RS.yml>
+kublectl scale --replicas=7 replicaset <name>
+
+
+
+
+
+
+Create an NGINX Pod
+kubectl run --generator=run-pod/v1 nginx --image=nginx
+
+
+Generate POD Manifest YAML file (-o yaml). Don't create it(--dry-run)
+kubectl run --generator=run-pod/v1 nginx --image=nginx --dry-run -o yaml
+
+kubectl expose pod redis --port=6379 --name redis-service
+
+Create a deployment
+kubectl create deployment --image=nginx nginx
+
+
+
+Generate Deployment YAML file (-o yaml). Don't create it(--dry-run)
+kubectl create deployment --image=nginx nginx --dry-run -o yaml
+
+
+
+Generate Deployment YAML file (-o yaml). Don't create it(--dry-run) with 4 Replicas (--replicas=4)
+kubectl create deployment --image=nginx nginx --dry-run -o yaml > nginx-deployment.yaml
+
+Save it to a file, make necessary changes to the file (for example, adding more replicas) and then create the deployment.
+
+
+===========================================================================================================================================================================
+
+
+Namespace:
+
+kubectl config set-context --current --namespace=<<ns>>
+# Validate it
+kubectl config view --minify | grep namespace:
+
+kubectl get pods --namespace=<>
+kubectl get pods --all-namespaces
+
+kubectl config set-context --current --namespace=finance
+
+===========================================================================================================================================================================
+Commands & Args
+
+Docker:
+EntryPoint, CMD
+
+Kubernetes
+Commands, Args
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu-sleeper-2
+spec:
+  containers:
+  - name: ubuntu
+    image: ubuntu
+    command: ["sleep"]
+    args: ["5000"]
+
+===========================================================================================================================================================================
+
+ConfigMap
+kubectl create configmap 
+			   <config-name> --from-literal=<key>=<value>
+							 --from-literal=<key>=<value>
+
+kubectl create configmap
+			   <config-name> --from-file=<name.properties>
+
+Pod:
+ envFrom: 
+	- cofigMapRef: 
+	   - name: <>
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+kubectl create secret generic <secret-name> \
+	--from-literal=<key>=<value>
+	--from-literal=<key>=<value>
+	--from-literal=<key>=<value>
+	
+kubectl create secret  generic  <secret-name> --from-file=<filepath and name>
+
+
+apiVersion: v1
+kind: Secret
+metadata: 
+ name: <>
+data: 
+ <key>: <encoded value>
+ <key>: <encoded value>
+ <key>: <encoded value>
+ 
+
+To encode : 
+echo -n <value> | base64
+
+To decode
+echo -n <value> | base64 --decode
+
+Injecting to POD:
+
+spec: 
+ containers: 
+  envFrom: 
+   - secretRef: 
+      name: app-secret
+	  
+	  
+	  
+sql01: 
+c3FsMDE=
+cm9vdA==
+cGFzc3dvcmQxMjM=
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	  
+Docker Security:
+
+docker run ubuntu sleep 555
+docker run --user=<username> ubuntu sleep 555
+
+docker built -t <image name>
+
+
+root user's capabilities:
+/usr/include/linux/capability.h
+
+Adding capabilities to docker container:
+docker run --cap-add <capabilityname> ubuntu
+docker run --privileged ubuntu
+
+
+
+Pod:
+
+[Sibling to container]
+securityContext: 
+ runAsUser: root
+ capabilities: 
+  add: ["SYS_TIME"]
+ 
+======================================================================================================================================================================================================================================================================================================
+
+create serviceaccount <name>
+
+
+kubectl exec -it <pod-name> cat <volumepath]
+kubectl exec -it web-dashboard-74c56cd5f7-bvmww ls /var/run/secrets/kubernetes.io/serviceaccount
+kubectl exec -it web-dashboard-74c56cd5f7-bvmww cat /var/run/secrets/kubernetes.io/serviceaccount/token
+
+eyJhbGciOiJSUzI1NiIsImtpZCI6ImlmOGNWYml3eXU3SlM5QkNlaWxZck45c2I4dFhrb1VfdXYtSmpUdU5VMDQifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRhc2hib2FyZC1zYS10b2tlbi1ueHh4dyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJkYXNoYm9hcmQtc2EiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiI1NjE0ZGQxNi0xMzU5LTQyOTUtOWQ2ZC03OWIzNmIwOWIwNGIiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6ZGVmYXVsdDpkYXNoYm9hcmQtc2EifQ.mW80DbMuHmitl6U8CXTYHCxlzsbtsGXzcah9h_j12E4uyQXMLCWiD6Tjbz5TpUV-UpOBbf5T4kY5IBlzfZaAHLtqsoEg2DKYDVtD_3MngViKzxbbYEOqZdbhX3fzKzEnW8B97sIDwUP5yFNGpTJIpjAZMmBCqx7R7xRmBsaZDf0Jf1xTAwuMe4u0Hj5tzoOp2J0vQ9hvys0WGU7MTwYVgDOZXATOL5CYgAUJqu-UiiiabcI708uIC1U5TUBYH-Vbbv6DC6omUgVljUHY_vJEzBjqdI2CzzsN0aZirbrpONCXsyA3nfGkjpsqCl1ycTPTOsiFMzoYGoEuUp8pr9Oe3g
+
+
+serviceAccount: <sa-name>
+automountServiceAccountToken: false
+
+======================================================================================================================================================================================================================================================================================================
+Resource Requests
+
+spec: 
+ containers: 
+  - name: 
+    resources: 
+	 requests: 
+	  memory: 1Gi
+	  cpu: 1
+	  disk: 
+	 limits: 
+
+
+Set default limits:
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: mem-limit-range
+spec:
+  limits:
+  - default:
+      memory: 512Mi
+    defaultRequest:
+      memory: 256Mi
+    type: Container	 
+
+	
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-limit-range
+spec:
+  limits:
+  - default:
+      cpu: 1
+    defaultRequest:
+      cpu: 0.5
+    type: Container	  
+	
+-------------------------------------------------------------------------
+Taints and Tolerations:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Readiness Probes
+
+readinessProbe: 
+ httpGet: 
+  path: <path/file name>
+  port: 
+ initialDelaySeconds: 
+ periodSeconds: 
+ failureThreshold: 
+ 
+ 
+ readinessProbe: 
+  tcpSocket: 
+   port: 
+   
+ readinessProbe:
+  exec: 
+   command: 
+    - cat
+	- <file path and name> 
+	
+	
+	
+Curl test.sh
+
+for i in {1..20}; do
+   kubectl exec --namespace=kube-public curl -- sh -c 'test=`wget -qO- -T 2  http://webapp-service.default.svc.cluster.local:8080/ready 2>&1`
+ && echo "$test OK" || echo "Failed"';
+   echo ""
+done
+
+	
+------------------
+Labels
+
+kubectl get pods --selector app=app1
+
+
+* Job:
+* apiVersion: batch\v1
+* kind: Job
+* spec:
+* completions: 3
+* parallelism: 3
+* template:
+* spec:
+* containers:
+* restartPolicy: Never
+* CronJob:
+* apiVersion: batch\v1beta1
+* kind: CronJob
+* spec:
+* schedule: "*/1****"
+* jobTemplate:
+* spec:
+* completions: 3
+* parallelism: 3
+* template:
+* spec:
+* containers:
+* restartPolicy: Never
+* master $ more job-throw-dice.yaml
+* apiVersion: batch/v1
+* kind: Job
+* metadata:
+* name: throw-dice-job
+* spec:
+* completions: 3
+* backoffLimit: 30
+* parallelism: 3
+* template:
+* spec:
+* containers:
+* - name: throw-dice
+* image: kodekloud/throw-dice
+* restartPolicy: Never
+* -----------------------------------------
+* Volumes
+* volumes:
+* - name :
+* hostPath:
+* path:
+* type: directory
+* volumeMounts:
+* - mountPath: /opt
+* volumeName:
+* shared NFS:
+* volumes:
+* - name: awsSharedVolume
+* awsElasticBlockStore:
+* volumeID:
+* fsType: ext4
+
+* PersistentVolume:
+* kind: PersistentVolume
+* spec:
+* accessModes:
+* - ReadWriteOnce
+* capacity:
+* storage: 1Gi
+* hostPath:
+* path: /tmp/
+* type: directory
+
+
+* Persistent Volume Claim:
+* kind: PersistentVolumeClaim
+* spec:
+* accessModes:
+* - ReadWriteOnce
+* resources:
+* requests:
+* storage: 500Mi
+* persistentVolumeReclaimPolicy: Retain, Delete, Recycle
+* apiVersion: v1
+* kind: Pod
+* metadata:
+* name: mypod
+* spec:
+* containers:
+* - name: myfrontend
+* image: nginx
+* volumeMounts:
+* - mountPath: "/var/www/html"
+* name: mypd
+* volumes:
+* - name: mypd
+* persistentVolumeClaim:
+* claimName: myclaim
+
+
+ spec.volumes[1].name: Invalid value: "logPath-vol": 
+ a DNS-1123 label must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name',  or '123-abc', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?')
+* spec.containers[0].volumeMounts[1].name: Not found: "logPath-vol"
